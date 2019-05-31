@@ -11,10 +11,10 @@
 
 #include <math.h>
 
-#include "io.h"
-#include "scheduler.h"
-#include "SM.h"
-#include "led_matrix.h"
+#include "io.c"
+#include "scheduler.c"
+#include "SM.c"
+#include "led_matrix.c"
 
 
 // Implement scheduler code from PES.
@@ -42,15 +42,17 @@ int main()
 
 	// Period for the tasks
 	unsigned long int SMTick1_calc = 50;
-	unsigned long int SMTick2_calc = 500;
-	unsigned long int SMTick3_calc = 1000;
-	unsigned long int SMTick4_calc = 10;
+	unsigned long int SMTick2_calc = 50;
+	unsigned long int SMTick3_calc = 50;
+	unsigned long int SMTick4_calc = 50;
+	unsigned long int joyStickSM_calc = 50;
 
 	//Calculating GCD
 	unsigned long int tmpGCD = 1;
 	tmpGCD = findGCD(SMTick1_calc, SMTick2_calc);
 	tmpGCD = findGCD(tmpGCD, SMTick3_calc);
 	tmpGCD = findGCD(tmpGCD, SMTick4_calc);
+	tmpGCD = findGCD(tmpGCD, joyStickSM_calc);
 
 	//Greatest common divisor for all tasks or smallest time unit for tasks.
 	unsigned long int GCD = tmpGCD;
@@ -60,10 +62,11 @@ int main()
 	unsigned long int SMTick2_period = SMTick2_calc/GCD;
 	unsigned long int SMTick3_period = SMTick3_calc/GCD;
 	unsigned long int SMTick4_period = SMTick4_calc/GCD;
+	unsigned long int joyStickSM_period = joyStickSM_calc/GCD;
 
 	//Declare an array of tasks
-	static task task1, task2, task3, task4;
-	task *tasks[] = { &task1, &task2, &task3, &task4 };
+	static task task1, task2, task3, task4, task5;
+	task *tasks[] = { &task1, &task2, &task3, &task4, &task5 };
 	const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
 
 	// Task 1
@@ -82,19 +85,31 @@ int main()
 	task3.state = -1;//Task initial state.
 	task3.period = SMTick3_period;//Task Period.
 	task3.elapsedTime = SMTick3_period; // Task current elasped time.
-	task3.TickFct = &LED_SM; // Function pointer for the tick.
+	task3.TickFct = &LED_Matrix_SM; // Function pointer for the tick.
 
 	// Task 4
 	task4.state = -1;//Task initial state.
 	task4.period = SMTick4_period;//Task Period.
 	task4.elapsedTime = SMTick4_period; // Task current elasped time.
-	task4.TickFct = &SMTick4; // Function pointer for the tick.
+	task4.TickFct = &LED_Light_SM; // Function pointer for the tick.
+
+	// Task 5
+	task5.state = -1;//Task initial state.
+	task5.period = joyStickSM_period;//Task Period.
+	task5.elapsedTime = joyStickSM_period; // Task current elasped time.
+	task5.TickFct = &joyStickSM; // Function pointer for the tick.
 
 	// Set the timer and turn it on
 	TimerSet(GCD);
 	TimerOn();
 
 	unsigned short i; // Scheduler for-loop iterator
+
+	//shiftInit();
+
+		 adc_init();
+		 LCD_init();
+
 	while(1) {
 		// Scheduler code
 		for ( i = 0; i < numTasks; i++ ) {
@@ -107,6 +122,9 @@ int main()
 			}
 			tasks[i]->elapsedTime += 1;
 		}
+
+
+
 		while(!TimerFlag);
 		TimerFlag = 0;
 	}
