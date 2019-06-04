@@ -9,41 +9,41 @@
 
 // SM for Game Controller
 int GAME_SM(int state) {
-  switch (state) {
-    case Game_Home : {
-      break;
-    }
-    case Game_Play : {
-      break;
-    }
-    case Game_Paused : {
-      break;
-    }
-    case Game_Over : {
-      break;
-    }
-    default : {
-      break;
-    }
-  }
-
-  switch (state) {
-    case Game_Home : {
-      break;
-    }
-    case Game_Play : {
-      break;
-    }
-    case Game_Paused : {
-      break;
-    }
-    case Game_Over : {
-      break;
-    }
-    default : {
-      break;
-    }
-  }
+  // switch (state) {
+  //   case Game_Home : {
+  //     break;
+  //   }
+  //   case Game_Play : {
+  //     break;
+  //   }
+  //   case Game_Paused : {
+  //     break;
+  //   }
+  //   case Game_Over : {
+  //     break;
+  //   }
+  //   default : {
+  //     break;
+  //   }
+  // }
+  //
+  // switch (state) {
+  //   case Game_Home : {
+  //     break;
+  //   }
+  //   case Game_Play : {
+  //     break;
+  //   }
+  //   case Game_Paused : {
+  //     break;
+  //   }
+  //   case Game_Over : {
+  //     break;
+  //   }
+  //   default : {
+  //     break;
+  //   }
+  // }
 
   return 0;
 }
@@ -71,8 +71,7 @@ int LCD_SM(int state) {
     strcpy(LCD_DISPLAY_STRING,temp);
     LCD_DisplayString(1,LCD_DISPLAY_STRING);
   }
-
-  return 0;
+  return state;
 }
 
 // SM for Button Press
@@ -220,9 +219,59 @@ int joyStickSM(int state) {
   return state;
 }
 
-// SM fir LED Matrix
+// int Player_SM(int state) {
+//
+// }
+//
+// int Enemy_SM(int state) {
+//
+// }
+//
+// int Cherry_SM(int state) {
+//
+// }
+
 int LED_Matrix_SM(int state) {
-  return 0;
+  switch (state) {
+    case LED_Matrix_Red: {
+      state = LED_Matrix_Blue;
+      break;
+    }
+    case LED_Matrix_Blue: {
+      state = LED_Matrix_Green;
+      break;
+    }
+    case LED_Matrix_Green: {
+      state = LED_Matrix_Red;
+      break;
+    }
+    default:
+      state = LED_Matrix_Red;
+      break;
+  }
+
+  switch (state) {
+    case LED_Matrix_Red: {
+        for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
+          sendDataToLED(ENEMIES[i], RED);
+        }
+      break;
+    }
+    case LED_Matrix_Blue: {
+      sendDataToLED(PLAYER, BLUE);
+      break;
+    }
+    case LED_Matrix_Green: {
+      for(unsigned char i = 0; i < NUM_CHERRIES; i++) {
+        sendDataToLED(CHERRIES[i], GREEN);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  return state;
 }
 
 // SM for LED Debugging Lights

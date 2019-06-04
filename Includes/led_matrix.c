@@ -1,47 +1,141 @@
 #include "led_matrix.h"
 #include "io.h"
 
-void shiftRegInit() {
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, RESET, HIGH);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, LATCH, LOW);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, DATA, LOW);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, DATA_OUTPUT_ENABLE, HIGH);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, CLOCK, LOW);
-}
+unsigned char matrix[8][8] = {
+                       {ENEMY_1,0,0,0,CHERRY_10,0,0,ENEMY_2},
+                       {CHERRY_5,0,0,0,0,0,CHERRY_1,0},
+                       {0,CHERRY_2,0,0,0,0,0,0},
+                       {CHERRY_9,0,0,0,PLAYER,0,0,CHERRY_6},
+                       {0,0,0,0,CHERRY_3,0,0,0},
+                       {0,CHERRY_4,0,0,0,CHERRY_5,0,0},
+                       {0,0,0,0,CHERRY_7,0,0,0},
+                       {ENEMY_3,0,CHERRY_9,0,0,0,CHERRY_8,}
+             };
 
-void shiftData(uint8_t data) {;
+void shiftData(uint8_t data) {
   int i;
-  for (i = 7; i >= 0 ; i--) {
-  	// Sets SRCLR to 1 allowing data to be set
-  	// Also clears SRCLK in preparation of sending data
-  	PORTB = 0x80;
-  	// set SER = next bit of data to be sent.
-  	PORTB |= (((data >> i) & 0x01) << 4);
-  	// set SRCLK = 1. Rising edge shifts next bit of data into the shift register
-  	PORTB |= 0x40;
+  for(i = 7; i >= 0; i--) {
+    //SRCLR to HIGH
+    //Clear SRCLK
+    PORTD = 0x18;
+    //SER gets next bit
+    PORTD |= ((data >> i) & 0x01);
+    //SRCLK HIGH
+    PORTD |= 0x14;
   }
-  // set RCLK = 1. Rising edge copies data from the “Shift” register to the
-  //“Storage” register
-  PORTB |= 0x20;
-  // clears all lines in preparation of a new transmission
-  PORTB = 0x00;
+  //RCLK HIGH
+  PORTD |= 0x12;
+  //Clear data Lines
+  PORTD = 0x18;
 }
 
-void displayData() {
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, LATCH, HIGH);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, LATCH, LOW);
+void shiftData_() {
+  PORTD = 0x08;
 }
 
-void clearShiftRegister() {
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, RESET, LOW);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, LATCH, HIGH);
-  PORTD = SetBit(SHIFT_REG_DATA_BUS, LATCH, LOW);
+sendRedToLED() {
+  unsigned char column = 0x00;
+  unsigned char row = 0xFF;
+
+  for(unsigned char i = 0; i < ROW_SIZE; i++) {
+    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
+      if(matrix[i][j] == RED) {
+        column = SetBit(column, 7 - j, 1);
+        row = SetBit(row, 7 - i, 0);
+      }
+    }
+  }
+
+  shiftData(0xFF); //Green
+  shiftData(0xFF); //Blue
+  shiftData(row); //Red
+  shiftData(column); //Colum
+  shiftData_();
+
 }
 
-void sendDataToLED() {
+sendBlueToLED() {
+  unsigned char column = 0x00;
+  unsigned char row = 0xFF;
+
+  for(unsigned char i = 0; i < ROW_SIZE; i++) {
+    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
+      if(matrix[i][j] == BLUE) {
+        column = SetBit(column, 7 - j, 1);
+        row = SetBit(row, 7 - i, 0);
+      }
+    }
+  }
+
+  shiftData(0xFF); //Green
+  shiftData(row); //Blue
+  shiftData(0xFF); //Red
+  shiftData(column); //Colum
+  shiftData_();
+
+}
+
+sendGreenToLED() {
+  unsigned char column = 0x00;
+  unsigned char row = 0xFF;
+
+  for(unsigned char i = 0; i < ROW_SIZE; i++) {
+    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
+      if(matrix[i][j] == GREEN) {
+        column = SetBit(column, 7 - j, 1);
+        row = SetBit(row, 7 - i, 0);
+      }
+    }
+  }
+
+  shiftData(row); //Green
+  shiftData(0xFF); //Blue
+  shiftData(0xFF); //Red
+  shiftData(column); //Colum
+  shiftData_();
+
+}
+
+void sendDataToLED(unsigned char target, unsigned char color) {
+
+  unsigned char column = 0x00;
+  unsigned char row = 0xFF;
+
+  for(unsigned char i = 0; i < ROW_SIZE; i++) {
+    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
+      if(matrix[i][j] == target) {
+        column = SetBit(column, 7 - j, 1);
+        row = SetBit(row, 7 - i, 0);
+        goto next;
+      }
+    }
+  }
+
+  next:
+    if(color == GREEN) {
+      shiftData(row);
+      shiftData(0xFF);
+      shiftData(0xFF);
+    } else if(color == BLUE) {
+      shiftData(0xFF);
+      shiftData(row);
+      shiftData(0xFF);
+    } else if(color == RED) {
+      shiftData(0xFF);
+      shiftData(0xFF);
+      shiftData(row);
+    } else {
+      shiftData(0xFF);
+      shiftData(0xFF);
+      shiftData(0xFF);
+    }
+    shiftData(column);
+    shiftData_();
 
 }
 
 void clearLED() {
-
+  for(int i = 0; i < 4; i++) {
+    shiftData(0x00);
+  }
 }

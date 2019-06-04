@@ -34,18 +34,18 @@ int main()
 	/*
 	Output to LCD Data Lines
 	*/
-	 DDRC = 0xFF; PORTC = 0x00;
+	DDRC = 0xFF; PORTC = 0x00;
 	/*
 	Output to LEDMatrix
 	*/
 	DDRD = 0xFF; PORTD = 0x00;
 
 	// Period for the tasks
-	unsigned long int SMTick1_calc = 50;
-	unsigned long int SMTick2_calc = 50;
-	unsigned long int SMTick3_calc = 50;
-	unsigned long int SMTick4_calc = 50;
-	unsigned long int joyStickSM_calc = 50;
+	unsigned long int SMTick1_calc = 100;
+	unsigned long int SMTick2_calc = 100;
+	unsigned long int SMTick3_calc = 5;
+	unsigned long int SMTick4_calc = 100;
+	unsigned long int joyStickSM_calc = 100;
 
 	//Calculating GCD
 	unsigned long int tmpGCD = 1;
@@ -132,63 +132,3 @@ int main()
 	// Error: Program should not exit!
 	return 0;
 }
-
-
-
-// int main(void)
-// {
-
-//
-//
-// 	// Initializes the LCD display
-// 	LCD_init();
-//
-// 	// Starting at position 1 on the LCD screen, writes Hello World
-// 	LCD_DisplayString(1, "Pac-Man");
-// 	LCD_DisplayString(2, "Start | Reset");
-//
-// 	//PORTB = 0xFF;
-// 	 adc_init();
-//
-// 	while(1) {
-//
-// 		unsigned char button0 = GetBit(~PINA,3);
-// 		unsigned char button1 = GetBit(~PINA,4);
-//
-// 		//unsigned char x_axis = GetBit(PINA, 0);
-// 		//unsigned char y_axis = GetBit(PINA,1);
-// 		//unsigned char z_axis = GetBit(PINA, 2);
-// 		/*
-// 		if(button0 == 0x01) {
-// 			PORTB = 0x01;
-// 		}
-// 		if(button1 == 0x01) {
-// 			PORTB = 0x02;
-// 		}
-// 		*/
-//
-// 		int16_t x_axis = adc_read(0);  // Value of ADC register now stored in variable x. 0x 0000 0011 1111 1111
-// 		int16_t y_axis = adc_read(1);
-//
-//
-// 		if( y_axis >= 1023 && x_axis <= 1023 ) {
-// 			PORTB = 0x08;
-// 		} else if( y_axis <= 25 && x_axis <= 1023) {
-// 			PORTB = 0x01;
-// 		} else if(x_axis <= 225 && y_axis <= 1023) {
-// 			PORTB = 0x04;
-// 		} else if(x_axis >= 1023 && y_axis <= 1023) {
-// 			PORTB = 0x02;
-// 		} else if(GetBit(~PINA,2) == 0x01) {
-// 			PORTB = 0x0F;
-// 		} else {
-// 			PORTB = 0x00;
-// 		}
-//
-//
-//
-// 		//PORTB = lower;
-// 		//PORTD = upper;
-// 	}
-//
-// }
