@@ -1,6 +1,11 @@
+/*
+	Code Provided from UCR CS120B Lab Manuals
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+
 #include "io.h"
 
 #define SET_BIT(p,i) ((p) |= (1 << (i)))
@@ -147,16 +152,6 @@ void delay_ms(int miliSec) //for 8 Mhz crystal
 }
 
 /*----------------------------------------------------------------*/
-//Analog to Digital
-void ADC_init() {
-	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
-	// ADEN: setting this bit enables analog-to-digital conversion.
-	// ADSC: setting this bit starts the first conversion.
-	// ADATE: setting this bit enables auto-triggering. Since we are
-	//        in Free Running Mode, a new conversion will trigger whenever
-	//        the previous conversion completes.
-}
-
 // initialize adc
 void ADCInit()
 {

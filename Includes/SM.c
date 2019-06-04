@@ -359,17 +359,17 @@ int LEDMatrixSM(int state) {
   switch (state) {
     case LED_Matrix_Red: {
         for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
-          sendDataToLED(ENEMIES[i], RED);
+          SendDataToLED(ENEMIES[i], RED);
         }
       break;
     }
     case LED_Matrix_Blue: {
-      sendPlayerToLED();
+      SendPlayerToLED();
       break;
     }
     case LED_Matrix_Green: {
       for(unsigned char i = 0; i < NUM_CHERRIES; i++) {
-        sendDataToLED(CHERRIES[i], GREEN);
+        SendDataToLED(CHERRIES[i], GREEN);
       }
       break;
     }

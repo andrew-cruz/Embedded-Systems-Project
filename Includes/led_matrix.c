@@ -1,13 +1,8 @@
 #include "led_matrix.h"
 #include "io.h"
 #include "Entities.h"
-//
-// Player player;
-// Enemy enemy_1;
-// Enemy enemy_2;
-// Enemy enemy_3;
 
-unsigned char matrix[8][8] = {
+unsigned char led_screen[8][8] = {
                        {ENEMY_1,0,0,0,CHERRY_10,0,0,ENEMY_2},
                        {CHERRY_5,0,0,0,0,0,CHERRY_1,0},
                        {0,CHERRY_2,0,0,0,0,0,0},
@@ -18,7 +13,7 @@ unsigned char matrix[8][8] = {
                        {ENEMY_3,0,CHERRY_9,0,0,0,CHERRY_8,}
              };
 
-void shiftData(uint8_t data) {
+void ShiftData(uint8_t data) {
   int i;
   for(i = 7; i >= 0; i--) {
     //SRCLR to HIGH
@@ -35,36 +30,31 @@ void shiftData(uint8_t data) {
   PORTD = 0x18;
 }
 
-void shiftData_() {
+void ShiftDataEnable() {
   PORTD = 0x08;
 }
 
-void sendPlayerToLED() {
+void SendPlayerToLED() {
   unsigned char column = 0x00;
   unsigned char row = 0xFF;
 
   column = SetBit(column, PLAYER_POS[0], 1);
   row = SetBit(row, PLAYER_POS[1], 0);
 
-  shiftData(row);
-  shiftData(0xFF);
-  shiftData(row);
-  shiftData(column);
-  shiftData_();
-
-
+  ShiftData(row);
+  ShiftData(0xFF);
+  ShiftData(row);
+  ShiftData(column);
+  ShiftDataEnable();
 }
 
-// void sendEnemiesToLED(unsigned char)
-
-void sendDataToLED(unsigned char target, unsigned char color) {
-
+void SendDataToLED(unsigned char target, unsigned char color) {
   unsigned char column = 0x00;
   unsigned char row = 0xFF;
 
   for(unsigned char i = 0; i < ROW_SIZE; i++) {
     for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
-      if(matrix[i][j] == target) {
+      if(led_screen[i][j] == target) {
         column = SetBit(column, 7 - j, 1);
         row = SetBit(row, 7 - i, 0);
         goto next;
@@ -74,29 +64,23 @@ void sendDataToLED(unsigned char target, unsigned char color) {
 
   next:
     if(color == GREEN) {
-      shiftData(row);
-      shiftData(0xFF);
-      shiftData(0xFF);
+      ShiftData(row);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
     } else if(color == BLUE) {
-      shiftData(0xFF);
-      shiftData(row);
-      shiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(row);
+      ShiftData(0xFF);
     } else if(color == RED) {
-      shiftData(0xFF);
-      shiftData(0xFF);
-      shiftData(row);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(row);
     } else {
-      shiftData(0xFF);
-      shiftData(0xFF);
-      shiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
     }
-    shiftData(column);
-    shiftData_();
+    ShiftData(column);
+    ShiftDataEnable();
 
-}
-
-void clearLED() {
-  for(int i = 0; i < 4; i++) {
-    shiftData(0x00);
-  }
 }
