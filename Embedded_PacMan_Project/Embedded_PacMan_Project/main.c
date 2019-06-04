@@ -12,7 +12,6 @@
 #include <math.h>
 
 #include "io.c"
-#include "scheduler.c"
 #include "SM.c"
 #include "led_matrix.c"
 
@@ -141,7 +140,7 @@ int main()
 			}
 			tasks[i]->elapsedTime += 1;
 		}
-		
+
 		while(!TimerFlag);
 		TimerFlag = 0;
 	}
