@@ -87,7 +87,7 @@ void LCD_ClearScreen(void) {
    LCD_WriteCommand(0x01);
 }
 
-void LCD_init(void) {
+void LCDInit(void) {
 
     //wait for 100 ms.
 	delay_ms(100);
@@ -158,7 +158,7 @@ void ADC_init() {
 }
 
 // initialize adc
-void adc_init()
+void ADCInit()
 {
 	// AREF = AVcc
 	ADMUX = (1<<REFS0);

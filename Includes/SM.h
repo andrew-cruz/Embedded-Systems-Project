@@ -41,4 +41,7 @@
   enum LED_Light_States {SM4_Init, SM4_Left, SM4_Right, SM4_Up, SM4_Down, SM4_Button };
   int LED_Light_SM(int);
 
+  enum Player_SM_States {Player_Still, Player_Up, Player_Down, Player_Left, Player_Right};
+  int Player_SM(int);
+
 #endif

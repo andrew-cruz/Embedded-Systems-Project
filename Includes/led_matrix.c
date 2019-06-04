@@ -1,5 +1,11 @@
 #include "led_matrix.h"
 #include "io.h"
+#include "Entities.h"
+//
+// Player player;
+// Enemy enemy_1;
+// Enemy enemy_2;
+// Enemy enemy_3;
 
 unsigned char matrix[8][8] = {
                        {ENEMY_1,0,0,0,CHERRY_10,0,0,ENEMY_2},
@@ -33,68 +39,23 @@ void shiftData_() {
   PORTD = 0x08;
 }
 
-sendRedToLED() {
+void sendPlayerToLED() {
   unsigned char column = 0x00;
   unsigned char row = 0xFF;
 
-  for(unsigned char i = 0; i < ROW_SIZE; i++) {
-    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
-      if(matrix[i][j] == RED) {
-        column = SetBit(column, 7 - j, 1);
-        row = SetBit(row, 7 - i, 0);
-      }
-    }
-  }
+  column = SetBit(column, PLAYER_POS[0], 1);
+  row = SetBit(row, PLAYER_POS[1], 0);
 
-  shiftData(0xFF); //Green
-  shiftData(0xFF); //Blue
-  shiftData(row); //Red
-  shiftData(column); //Colum
+  shiftData(row);
+  shiftData(0xFF);
+  shiftData(row);
+  shiftData(column);
   shiftData_();
+
 
 }
 
-sendBlueToLED() {
-  unsigned char column = 0x00;
-  unsigned char row = 0xFF;
-
-  for(unsigned char i = 0; i < ROW_SIZE; i++) {
-    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
-      if(matrix[i][j] == BLUE) {
-        column = SetBit(column, 7 - j, 1);
-        row = SetBit(row, 7 - i, 0);
-      }
-    }
-  }
-
-  shiftData(0xFF); //Green
-  shiftData(row); //Blue
-  shiftData(0xFF); //Red
-  shiftData(column); //Colum
-  shiftData_();
-
-}
-
-sendGreenToLED() {
-  unsigned char column = 0x00;
-  unsigned char row = 0xFF;
-
-  for(unsigned char i = 0; i < ROW_SIZE; i++) {
-    for(unsigned char j = 0; j < COLUMN_SIZE; j++) {
-      if(matrix[i][j] == GREEN) {
-        column = SetBit(column, 7 - j, 1);
-        row = SetBit(row, 7 - i, 0);
-      }
-    }
-  }
-
-  shiftData(row); //Green
-  shiftData(0xFF); //Blue
-  shiftData(0xFF); //Red
-  shiftData(column); //Colum
-  shiftData_();
-
-}
+// void sendEnemiesToLED(unsigned char)
 
 void sendDataToLED(unsigned char target, unsigned char color) {
 

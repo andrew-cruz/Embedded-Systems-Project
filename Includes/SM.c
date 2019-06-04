@@ -6,119 +6,55 @@
 #include "SM.h"
 #include "io.h"
 #include "led_matrix.h"
+#include "Entities.h"
 
 // SM for Game Controller
-int GAME_SM(int state) {
-  // switch (state) {
-  //   case Game_Home : {
-  //     break;
-  //   }
-  //   case Game_Play : {
-  //     break;
-  //   }
-  //   case Game_Paused : {
-  //     break;
-  //   }
-  //   case Game_Over : {
-  //     break;
-  //   }
-  //   default : {
-  //     break;
-  //   }
-  // }
-  //
-  // switch (state) {
-  //   case Game_Home : {
-  //     break;
-  //   }
-  //   case Game_Play : {
-  //     break;
-  //   }
-  //   case Game_Paused : {
-  //     break;
-  //   }
-  //   case Game_Over : {
-  //     break;
-  //   }
-  //   default : {
-  //     break;
-  //   }
-  // }
+int GameSM(int state) {
+  switch (state) {
+    case Game_Home : {
+      state = Game_Play;
+      break;
+    }
+    case Game_Play : {
+      break;
+    }
+    case Game_Paused : {
+      break;
+    }
+    case Game_Over : {
+      break;
+    }
+    default : {
+      state = Game_Play;
+      break;
+    }
+  }
+
+  switch (state) {
+    case Game_Home : {
+      initGame();
+      break;
+    }
+    case Game_Play : {
+
+      break;
+    }
+    case Game_Paused : {
+      break;
+    }
+    case Game_Over : {
+      break;
+    }
+    default : {
+      break;
+    }
+  }
 
   return 0;
 }
 
-// SM for LCD Screen
-int LCD_SM(int state) {
-  unsigned char temp[12] = "";
-
-  if(JOYSTICK_POSITION == STILL) {
-    strcpy(temp,"Still");
-  } else if(JOYSTICK_POSITION == LEFT) {
-    strcpy(temp,"Left");
-  } else if(JOYSTICK_POSITION == RIGHT) {
-    strcpy(temp,"Right");
-  } else if(JOYSTICK_POSITION == UP) {
-    strcpy(temp,"Up");
-  } else if(JOYSTICK_POSITION == DOWN) {
-    strcpy(temp,"Down");
-  } else {
-    strcpy(temp,"Still");
-  }
-
-  if(strcmp(temp,LCD_DISPLAY_STRING) != 0) {
-    LCD_ClearScreen();
-    strcpy(LCD_DISPLAY_STRING,temp);
-    LCD_DisplayString(1,LCD_DISPLAY_STRING);
-  }
-  return state;
-}
-
-// SM for Button Press
-int Button_SM(int state) {
-  //Get Input from button
-  unsigned char buttonPress0 = GetBit(~PINA, 3);
-  // unsigned char buttonPress1 = GetBit(~PINA, 4);
-
-  switch (state) {
-    case Button_Wait: { //Wait for Button Press
-      if(buttonPress0) {
-        state = Button_Press;
-      }
-      break;
-    }
-    case Button_Press: {  //Button had been pressed
-      state = Button_Release;
-      break;
-    }
-    case Button_Release: { //Wait for button to get released
-      if(~buttonPress0) {
-        state = Button_Wait;
-      }
-      break;
-    }
-    default: {
-      state = Button_Wait;
-      break;
-    }
-  }
-
-  //State Machine actions
-  switch (state) {
-    case Button_Wait: break; //Waiting for button to press no action
-    case Button_Press: {  //Button pressed. Update global variable
-      BUTTON = (BUTTON == FALSE) ? TRUE : FALSE;
-      break;
-    }
-    case Button_Release: break; //Waiting for button to be released
-    default: break;
-  }
-
-  return state;
-}
-
 // SM for joystick input
-int joyStickSM(int state) {
+int JoystickSM(int state) {
   //Get Input from button
   int16_t x_axis = adc_read(0);
   int16_t y_axis = adc_read(1);
@@ -219,19 +155,189 @@ int joyStickSM(int state) {
   return state;
 }
 
-// int Player_SM(int state) {
-//
-// }
-//
-// int Enemy_SM(int state) {
-//
-// }
-//
-// int Cherry_SM(int state) {
-//
-// }
+// SM for Button Press
+int ButtonSM(int state) {
+  //Get Input from button
+  unsigned char buttonPress0 = GetBit(~PINA, 3);
+  // unsigned char buttonPress1 = GetBit(~PINA, 4);
 
-int LED_Matrix_SM(int state) {
+  switch (state) {
+    case Button_Wait: { //Wait for Button Press
+      if(buttonPress0) {
+        state = Button_Press;
+      }
+      break;
+    }
+    case Button_Press: {  //Button had been pressed
+      state = Button_Release;
+      break;
+    }
+    case Button_Release: { //Wait for button to get released
+      if(~buttonPress0) {
+        state = Button_Wait;
+      }
+      break;
+    }
+    default: {
+      state = Button_Wait;
+      break;
+    }
+  }
+
+  //State Machine actions
+  switch (state) {
+    case Button_Wait: break; //Waiting for button to press no action
+    case Button_Press: {  //Button pressed. Update global variable
+      BUTTON = (BUTTON == FALSE) ? TRUE : FALSE;
+      break;
+    }
+    case Button_Release: break; //Waiting for button to be released
+    default: break;
+  }
+
+  return state;
+}
+
+int PlayerSM(int state) {
+  switch (state) {
+    case Player_Still: {
+      if(JOYSTICK_POSITION == STILL) {
+        state = Player_Still;
+      } else if(JOYSTICK_POSITION == UP) {
+        state = Player_Up;
+      } else if(JOYSTICK_POSITION == DOWN) {
+        state = Player_Down;
+      } else if(JOYSTICK_POSITION == LEFT) {
+        state = Player_Left;
+      } else if(JOYSTICK_POSITION == RIGHT) {
+        state = Player_Right;
+      } else {
+        state = Player_Still;
+      }
+      break;
+    }
+    case Player_Up: {
+      if(JOYSTICK_POSITION == STILL) {
+        state = Player_Still;
+      } else if(JOYSTICK_POSITION == UP) {
+        state = Player_Up;
+      } else if(JOYSTICK_POSITION == DOWN) {
+        state = Player_Down;
+      } else if(JOYSTICK_POSITION == LEFT) {
+        state = Player_Left;
+      } else if(JOYSTICK_POSITION == RIGHT) {
+        state = Player_Right;
+      } else {
+        state = Player_Still;
+      }
+      break;
+    }
+    case Player_Down: {
+      if(JOYSTICK_POSITION == STILL) {
+        state = Player_Still;
+      } else if(JOYSTICK_POSITION == UP) {
+        state = Player_Up;
+      } else if(JOYSTICK_POSITION == DOWN) {
+        state = Player_Down;
+      } else if(JOYSTICK_POSITION == LEFT) {
+        state = Player_Left;
+      } else if(JOYSTICK_POSITION == RIGHT) {
+        state = Player_Right;
+      } else {
+        state = Player_Still;
+      }
+      break;
+    }
+    case Player_Left: {
+      if(JOYSTICK_POSITION == STILL) {
+        state = Player_Still;
+      } else if(JOYSTICK_POSITION == UP) {
+        state = Player_Up;
+      } else if(JOYSTICK_POSITION == DOWN) {
+        state = Player_Down;
+      } else if(JOYSTICK_POSITION == LEFT) {
+        state = Player_Left;
+      } else if(JOYSTICK_POSITION == RIGHT) {
+        state = Player_Right;
+      } else {
+        state = Player_Still;
+      }
+      break;
+    }
+    case Player_Right: {
+      if(JOYSTICK_POSITION == STILL) {
+        state = Player_Still;
+      } else if(JOYSTICK_POSITION == UP) {
+        state = Player_Up;
+      } else if(JOYSTICK_POSITION == DOWN) {
+        state = Player_Down;
+      } else if(JOYSTICK_POSITION == LEFT) {
+        state = Player_Left;
+      } else if(JOYSTICK_POSITION == RIGHT) {
+        state = Player_Right;
+      } else {
+        state = Player_Still;
+      }
+      break;
+    }
+    default: {
+      state = Player_Still;
+      break;
+    }
+  }
+
+  switch (state) {
+    case Player_Still: {
+      //DO Nothing to Player Position
+      break;
+    }
+    case Player_Up: {
+      //Move i component up
+      if(PLAYER_POS[0] - 1 < 0) {
+        PLAYER_POS[0] = 7;
+      } else {
+        PLAYER_POS[0] -= 1;
+      }
+      break;
+    }
+    case Player_Down: {
+      //Move i component down
+      if(PLAYER_POS[0] + 1 > 7) {
+        PLAYER_POS[0] = 0;
+      } else {
+        PLAYER_POS[0] += 1;
+      }
+      break;
+    }
+    case Player_Left: {
+      //Move j component left
+      if(PLAYER_POS[1] - 1 < 0) {
+        PLAYER_POS[1] = 7;
+      } else {
+        PLAYER_POS[1] -= 1;
+      }
+      break;
+    }
+    case Player_Right: {
+      //Move j component right
+      if(PLAYER_POS[1] + 1 > 7) {
+        PLAYER_POS[1] = 0;
+      } else {
+        PLAYER_POS[1] += 1;
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+}
+
+int EnemySM(int state) {
+  return 0;
+}
+
+int LEDMatrixSM(int state) {
   switch (state) {
     case LED_Matrix_Red: {
       state = LED_Matrix_Blue;
@@ -258,7 +364,7 @@ int LED_Matrix_SM(int state) {
       break;
     }
     case LED_Matrix_Blue: {
-      sendDataToLED(PLAYER, BLUE);
+      sendPlayerToLED();
       break;
     }
     case LED_Matrix_Green: {
@@ -274,8 +380,34 @@ int LED_Matrix_SM(int state) {
   return state;
 }
 
+// SM for LCD Screen
+int LCDScreenSM(int state) {
+  unsigned char temp[12] = "";
+
+  if(JOYSTICK_POSITION == STILL) {
+    strcpy(temp,"Still");
+  } else if(JOYSTICK_POSITION == LEFT) {
+    strcpy(temp,"Left");
+  } else if(JOYSTICK_POSITION == RIGHT) {
+    strcpy(temp,"Right");
+  } else if(JOYSTICK_POSITION == UP) {
+    strcpy(temp,"Up");
+  } else if(JOYSTICK_POSITION == DOWN) {
+    strcpy(temp,"Down");
+  } else {
+    strcpy(temp,"Still");
+  }
+
+  if(strcmp(temp,LCD_DISPLAY_STRING) != 0) {
+    LCD_ClearScreen();
+    strcpy(LCD_DISPLAY_STRING,temp);
+    LCD_DisplayString(1,LCD_DISPLAY_STRING);
+  }
+  return state;
+}
+
 // SM for LED Debugging Lights
-int LED_Light_SM(int state) {
+int SoundSM(int state) {
   switch (state) {
     case SM4_Init: { //Wait for Joystick Input
       if(JOYSTICK_POSITION == LEFT) {

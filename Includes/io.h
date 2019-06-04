@@ -3,7 +3,7 @@
 
   volatile unsigned char TimerFlag = 0; // TimerISR() sets this to 1. C programmer should clear to 0.
 
-  void LCD_init();
+  void LCDInit();
   void LCD_ClearScreen(void);
   void LCD_WriteCommand (unsigned char Command);
   void LCD_Cursor (unsigned char column);
@@ -12,7 +12,7 @@
   unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b);
   unsigned char GetBit(unsigned char x, unsigned char k);
   void ADC_init();
-  void adc_init();
+  void ADCInit();
   uint16_t adc_read(uint8_t ch);
   
 #endif
