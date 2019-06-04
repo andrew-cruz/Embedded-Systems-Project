@@ -23,25 +23,28 @@
   unsigned char JOYSTICK_POSITION = STILL;
   unsigned char LCD_DISPLAY_STRING[12] = "";
 
-  enum GAME_SM_STATES { Game_Home, Game_Play, Game_Paused, Game_Over };
-  int GAME_SM(int);
+  enum GameSMSTATES { Game_Home, Game_Play, Game_Paused, Game_Over };
+  int GameSM(int);
 
-  enum LCD_SM_States { LCD_Start, LCD_Play, LCD_Pause, LCD_GameOver };
+  enum JoyStickSMStates {Joystick_Still, JoyStick_Left, JoyStick_Right, JoyStick_Up, JoyStick_Down};
+  int JoystickSM(int);
+
+  enum ButtonSMStates { Button_Wait, Button_Press, Button_Release };
+  int ButtonSM(int);
+
+  enum PlayerSMStates {Player_Still, Player_Up, Player_Down, Player_Left, Player_Right};
+  int PlayerSM(int);
+
+  enum EnemySMStates {Enemy_Still, Enemy_Up, Enemy_Down, Enemy_Left, Enemy_Right};
+  int EnemySM(int);
+
+  enum LEDMatrixStates { LED_Matrix_Red, LED_Matrix_Blue, LED_Matrix_Green };
+  int LEDMatrixSM(int);
+
+  enum LCDSMStates { LCD_Start, LCD_Play, LCD_Pause, LCD_GameOver };
   int LCD_SM(int);
 
-  enum Button_SM_States { Button_Wait, Button_Press, Button_Release };
-  int Button_SM(int);
-
-  enum JoyStick_SM_States {Joystick_Still, JoyStick_Left, JoyStick_Right, JoyStick_Up, JoyStick_Down};
-  int joyStickSM(int);
-
-  enum LED_Matrix_States { LED_Matrix_Red, LED_Matrix_Blue, LED_Matrix_Green };
-  int LED_Matrix_SM(int);
-
-  enum LED_Light_States {SM4_Init, SM4_Left, SM4_Right, SM4_Up, SM4_Down, SM4_Button };
-  int LED_Light_SM(int);
-
-  enum Player_SM_States {Player_Still, Player_Up, Player_Down, Player_Left, Player_Right};
-  int Player_SM(int);
+  enum SoundtStates {SM4_Init, SM4_Left, SM4_Right, SM4_Up, SM4_Down, SM4_Button };
+  int SoundSM(int);
 
 #endif

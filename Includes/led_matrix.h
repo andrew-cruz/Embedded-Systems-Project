@@ -40,6 +40,6 @@
 
   void ShiftData(uint8_t data);
   void ShiftDataEnable();
+  void SendPlayerToLED();
   void SendDataToLED(unsigned char t, unsigned char c);
-  void SendDataToLED();
 #endif

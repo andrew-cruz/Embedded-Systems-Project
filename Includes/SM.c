@@ -32,7 +32,7 @@ int GameSM(int state) {
 
   switch (state) {
     case Game_Home : {
-      initGame();
+      // initGame();
       break;
     }
     case Game_Play : {
