@@ -52,7 +52,7 @@
   enum LCDSMStates { LCD_Start, LCD_Play, LCD_Pause, LCD_GameOver };
   int LCD_SM(int);
 
-  enum SoundtStates {SM4_Init, SM4_Left, SM4_Right, SM4_Up, SM4_Down, SM4_Button };
+  enum SoundtStates {Sound_Off, Sound_Game, Sound_GameOver, Sound_GameOver_Highscore};
   int SoundSM(int);
 
 #endif

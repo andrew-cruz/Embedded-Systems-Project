@@ -392,5 +392,68 @@ int LCDScreenSM(int state) {
 
 // SM for LED Debugging Lights
 int SoundSM(int state) {
-  return 0;
+  switch (state) {
+    case Sound_Off: {
+      if(GAME_STATE == GAME) {
+        state = Sound_Game;
+      } else {
+        state = Sound_Off;
+      }
+      break;
+    }
+    case Sound_Game: {
+      if(GAME_STATE == PAUSED) {
+        state = Sound_Off;
+      } else if(GAME_STATE == GAMEOVER && DECIMAL_SCORE > HIGH_SCORE) {
+          state = Sound_GameOver_Highscore;
+      } else if(GAME_STATE == GAMEOVER) {
+        state = Sound_GameOver;
+      } else {
+        state = Sound_Game;
+      }
+      break;
+    }
+    case Sound_GameOver: {
+      if(GAME_STATE == HOME) {
+        state = Sound_Off;
+      } else {
+        state = Sound_GameOver;
+      }
+      break;
+    }
+    case Sound_GameOver_Highscore: {
+      if(GAME_STATE == HOME) {
+        state = Sound_Off;
+      } else {
+        state = Sound_GameOver_Highscore;
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+
+  switch (state) {
+    case Sound_Off: {
+    //No sound
+      break;
+    }
+    case Sound_Game: {
+
+      break;
+    }
+    case Sound_GameOver: {
+
+      break;
+    }
+    case Sound_GameOver_Highscore: {
+
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+  return state;
 }
