@@ -15,27 +15,28 @@
 #include "SM.c"
 #include "led_matrix.c"
 
-
 // Implement scheduler code from PES.
 int main()
 {
 	// Set Data Direction Registers
 	/*
 	Input from JoyStick A0-A2
-	Input from Buttons A3-A4
+	Input from Light Sensor A3
 	*/
 	DDRA = 0x00;PORTA = 0xFF;
 	/*
+	Input from Joysti
 	Output to speaker
 	Output Data Lines to LCD B6-B7
 	*/
-	DDRB = 0xFF;PORTB = 0x00;
+	DDRB = 0xFE;PORTB = 0x01;
 	/*
 	Output to LCD Data Lines
 	*/
 	DDRC = 0xFF; PORTC = 0x00;
 	/*
 	Output to LEDMatrix
+	Shift regs
 	*/
 	DDRD = 0xFF; PORTD = 0x00;
 
@@ -44,7 +45,7 @@ int main()
 	unsigned long int joystick_sm_period = 100;
 	unsigned long int button_sm_period = 100;
 	unsigned long int player_sm_period = 100;
-	unsigned long int enemy_sm_period = 100;
+	unsigned long int enemy_sm_period = 350;
 	unsigned long int led_sm_period = 5;
 	unsigned long int lcd_sm_period = 100;
 	unsigned long int sound_sm_period = 100;
@@ -127,6 +128,8 @@ int main()
 	LCDInit();
 	// Scheduler for-loop iterator
 	unsigned short i;
+	unsigned char seed = RandomNum();
+	srand(seed);
 
 	while(1) {
 		// Scheduler code

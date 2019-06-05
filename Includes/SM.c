@@ -6,43 +6,66 @@
 #include "SM.h"
 #include "io.h"
 #include "led_matrix.h"
-#include "Entities.h"
+
 
 // SM for Game Controller
 int GameSM(int state) {
   switch (state) {
     case Game_Home : {
-      state = Game_Play;
+      if(START_GAME == TRUE) {
+        state = Game_Play;
+      } else {
+        state = Game_Home;
+      }
       break;
     }
     case Game_Play : {
+      if(ENEMY_COLLISION == TRUE) {
+        state = Game_Over;
+      } else if(PAUSE_GAME == TRUE) {
+        state = Game_Paused;
+      }  else {
+        state = Game_Play;
+      }
       break;
     }
     case Game_Paused : {
+      if(PAUSE_GAME == FALSE) {
+        state = Game_Play;
+      } else {
+        state = Game_Paused;
+      }
       break;
     }
     case Game_Over : {
+      if(RESTART_GAME == TRUE) {
+        state = Game_Home;
+      } else {
+        state = Game_Over;
+      }
       break;
     }
     default : {
-      state = Game_Play;
+      state = Game_Home;
       break;
     }
   }
 
   switch (state) {
     case Game_Home : {
-      // initGame();
+      GAME_STATE = HOME;
       break;
     }
     case Game_Play : {
-
+      GAME_STATE = GAME;
       break;
     }
     case Game_Paused : {
+      GAME_STATE = PAUSED;
       break;
     }
     case Game_Over : {
+      GAME_STATE = GAMEOVER;
       break;
     }
     default : {
@@ -50,106 +73,32 @@ int GameSM(int state) {
     }
   }
 
-  return 0;
+  return state;
 }
 
 // SM for joystick input
 int JoystickSM(int state) {
+  if(GAME_STATE != GAME) {
+    JOYSTICK_POSITION = STILL;
+    return state;
+  }
   //Get Input from button
   int16_t x_axis = adc_read(0);
   int16_t y_axis = adc_read(1);
-  // unsigned char buttonPress1 = GetBit(~PINA, 4);
 
-  switch (state) {
-    case Joystick_Still: { //Wait for Joystick Input
-      if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
-        state = JoyStick_Down;
-  		} else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
-        state = JoyStick_Up;
-  		} else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
-        state = JoyStick_Left;
-  		} else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
-        state = JoyStick_Right;
-  		} else {  //JoyStick is in middle
-        state = Joystick_Still;
-  		}
-      break;
-    }
-    case JoyStick_Left: {  //Button had been pressed
-      if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
-        state = JoyStick_Down;
-  		} else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
-        state = JoyStick_Up;
-  		} else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
-        state = JoyStick_Left;
-  		} else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
-        state = JoyStick_Right;
-  		} else {  //JoyStick is in middle
-        state = Joystick_Still;
-  		}
-      break;
-    }
-    case JoyStick_Right: { //Wait for button to get released
-      if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
-        state = JoyStick_Down;
-  		} else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
-        state = JoyStick_Up;
-  		} else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
-        state = JoyStick_Left;
-  		} else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
-        state = JoyStick_Right;
-  		} else {  //JoyStick is in middle
-        state = Joystick_Still;
-  		}
-      break;
-    }
-    case JoyStick_Up: {  //Button had been pressed
-      if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
-        state = JoyStick_Down;
-  		} else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
-        state = JoyStick_Up;
-  		} else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
-        state = JoyStick_Left;
-  		} else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
-        state = JoyStick_Right;
-  		} else {  //JoyStick is in middle
-        state = Joystick_Still;
-  		}
-      break;
-    }
-    case JoyStick_Down: { //Wait for button to get released
-      if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
-        state = JoyStick_Down;
-  		} else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
-        state = JoyStick_Up;
-  		} else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
-        state = JoyStick_Left;
-  		} else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
-        state = JoyStick_Right;
-  		} else {  //JoyStick is in middle
-        state = Joystick_Still;
-  		}
-      break;
-    }
-    default: {  //Default to joystick in middle position
-      state = Joystick_Still;
-      break;
-    }
-  }
+//CS120B FINAL
+//KNow #9 and #3.75 and #11
 
-  switch (state) { //State Machine actions
-    case Joystick_Still: JOYSTICK_POSITION = STILL; //Joystick is still
-      break;
-    case JoyStick_Left: JOYSTICK_POSITION = LEFT; //Joystick is in left pos
-      break;
-    case JoyStick_Right: JOYSTICK_POSITION = RIGHT; //Joystick is in right pos
-      break;
-    case JoyStick_Up: JOYSTICK_POSITION = UP; //Joystick is in up pos
-      break;
-    case JoyStick_Down: JOYSTICK_POSITION = DOWN; //Joystick is in down pos
-      break;
-    default: JOYSTICK_POSITION = STILL; //Default to middle pos
-      break;
+  if( y_axis >= 1023 && x_axis <= 1023 ) { //Joystick is pointing Up
+    JOYSTICK_POSITION = LEFT;
+  } else if( y_axis <= 25 && x_axis <= 1023) { //Joystick is pointing Down
+    JOYSTICK_POSITION = RIGHT;
+  } else if(x_axis <= 225 && y_axis <= 1023) { //Joystick is pointing to Right
+    JOYSTICK_POSITION = UP;
+  } else if(x_axis >= 1023 && y_axis <= 1023) { //JoyStick is pointing to Left
+    JOYSTICK_POSITION = DOWN;
+  } else {  //JoyStick is in middle
+    JOYSTICK_POSITION = STILL;
   }
 
   return state;
@@ -158,13 +107,15 @@ int JoystickSM(int state) {
 // SM for Button Press
 int ButtonSM(int state) {
   //Get Input from button
-  unsigned char buttonPress0 = GetBit(~PINA, 3);
-  // unsigned char buttonPress1 = GetBit(~PINA, 4);
+  // unsigned char buttonPress0 = 0;
+  unsigned char buttonPress0 = GetBit(~PINB, 0);
 
   switch (state) {
     case Button_Wait: { //Wait for Button Press
-      if(buttonPress0) {
+      if(buttonPress0 == 1) {
         state = Button_Press;
+      } else {
+        state = Button_Wait;
       }
       break;
     }
@@ -173,8 +124,10 @@ int ButtonSM(int state) {
       break;
     }
     case Button_Release: { //Wait for button to get released
-      if(~buttonPress0) {
+      if(buttonPress0 == 0) {
         state = Button_Wait;
+      } else {
+        state = Button_Release;
       }
       break;
     }
@@ -188,7 +141,19 @@ int ButtonSM(int state) {
   switch (state) {
     case Button_Wait: break; //Waiting for button to press no action
     case Button_Press: {  //Button pressed. Update global variable
-      BUTTON = (BUTTON == FALSE) ? TRUE : FALSE;
+      if(GAME_STATE == HOME) {
+        START_GAME = (START_GAME == FALSE) ? TRUE : FALSE;
+        PAUSE_GAME = FALSE;
+        RESTART_GAME = FALSE;
+      } else if(GAME_STATE == GAME || GAME_STATE == PAUSED) {
+        START_GAME = FALSE;
+        PAUSE_GAME = (PAUSE_GAME == FALSE) ? TRUE : FALSE;
+        RESTART_GAME = FALSE;
+      } else if(GAME_STATE == GAMEOVER){
+        START_GAME = FALSE;
+        PAUSE_GAME = FALSE;
+        RESTART_GAME = (RESTART_GAME == FALSE) ? TRUE : FALSE;
+      }
       break;
     }
     case Button_Release: break; //Waiting for button to be released
@@ -199,178 +164,174 @@ int ButtonSM(int state) {
 }
 
 int PlayerSM(int state) {
-  switch (state) {
-    case Player_Still: {
-      if(JOYSTICK_POSITION == STILL) {
-        state = Player_Still;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = Player_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = Player_Down;
-      } else if(JOYSTICK_POSITION == LEFT) {
-        state = Player_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = Player_Right;
-      } else {
-        state = Player_Still;
-      }
-      break;
+  // CheckCollisionEnemy();
+  if(JOYSTICK_POSITION == UP) {
+    if(PLAYER_POS[0] + 1 > 7) {
+      PLAYER_POS[0] = 0;
+    } else {
+      PLAYER_POS[0] += 1;
     }
-    case Player_Up: {
-      if(JOYSTICK_POSITION == STILL) {
-        state = Player_Still;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = Player_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = Player_Down;
-      } else if(JOYSTICK_POSITION == LEFT) {
-        state = Player_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = Player_Right;
-      } else {
-        state = Player_Still;
-      }
-      break;
+  } else if(JOYSTICK_POSITION == DOWN) {
+    if(PLAYER_POS[0] - 1 < 0) {
+      PLAYER_POS[0] = 7;
+    } else {
+      PLAYER_POS[0] -= 1;
     }
-    case Player_Down: {
-      if(JOYSTICK_POSITION == STILL) {
-        state = Player_Still;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = Player_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = Player_Down;
-      } else if(JOYSTICK_POSITION == LEFT) {
-        state = Player_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = Player_Right;
-      } else {
-        state = Player_Still;
-      }
-      break;
+  } else if(JOYSTICK_POSITION == LEFT) {
+    if(PLAYER_POS[1] - 1 < 0) {
+      PLAYER_POS[1] = 7;
+    } else {
+      PLAYER_POS[1] -= 1;
     }
-    case Player_Left: {
-      if(JOYSTICK_POSITION == STILL) {
-        state = Player_Still;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = Player_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = Player_Down;
-      } else if(JOYSTICK_POSITION == LEFT) {
-        state = Player_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = Player_Right;
-      } else {
-        state = Player_Still;
-      }
-      break;
-    }
-    case Player_Right: {
-      if(JOYSTICK_POSITION == STILL) {
-        state = Player_Still;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = Player_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = Player_Down;
-      } else if(JOYSTICK_POSITION == LEFT) {
-        state = Player_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = Player_Right;
-      } else {
-        state = Player_Still;
-      }
-      break;
-    }
-    default: {
-      state = Player_Still;
-      break;
+  } else if(JOYSTICK_POSITION == RIGHT) {
+    if(PLAYER_POS[1] + 1 > 7) {
+      PLAYER_POS[1] = 0;
+    } else {
+      PLAYER_POS[1] += 1;
     }
   }
+  CheckCollisionEnemy();
+  CheckCollisionPellet();
 
-  switch (state) {
-    case Player_Still: {
-      //DO Nothing to Player Position
-      break;
-    }
-    case Player_Up: {
-      //Move i component up
-      if(PLAYER_POS[0] - 1 < 0) {
-        PLAYER_POS[0] = 7;
-      } else {
-        PLAYER_POS[0] -= 1;
-      }
-      break;
-    }
-    case Player_Down: {
-      //Move i component down
-      if(PLAYER_POS[0] + 1 > 7) {
-        PLAYER_POS[0] = 0;
-      } else {
-        PLAYER_POS[0] += 1;
-      }
-      break;
-    }
-    case Player_Left: {
-      //Move j component left
-      if(PLAYER_POS[1] - 1 < 0) {
-        PLAYER_POS[1] = 7;
-      } else {
-        PLAYER_POS[1] -= 1;
-      }
-      break;
-    }
-    case Player_Right: {
-      //Move j component right
-      if(PLAYER_POS[1] + 1 > 7) {
-        PLAYER_POS[1] = 0;
-      } else {
-        PLAYER_POS[1] += 1;
-      }
-      break;
-    }
-    default: {
-      break;
-    }
-  }
+  return state;
 }
 
 int EnemySM(int state) {
-  return 0;
+  if(GAME_STATE != GAME) {
+    return state;
+  }
+
+  for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
+    unsigned char direction = rand() % 4;
+    if(direction == 0) {
+      //Enemy moves left
+      if(ENEMY_POS[i][1] - 1 < 0) {
+        ENEMY_POS[i][1] = 7;
+      } else {
+        ENEMY_POS[i][1] -= 1;
+      }
+    } else if(direction == 1) {
+      //Enemy moves right
+      if(ENEMY_POS[i][1] + 1 > 7) {
+        ENEMY_POS[i][1] = 0;
+      } else {
+        ENEMY_POS[i][1] += 1;
+      }
+    } else if(direction == 2) {
+      //Enemy moves down
+      if(ENEMY_POS[i][0] - 1 < 0) {
+        ENEMY_POS[i][0] = 7;
+      } else {
+        ENEMY_POS[i][0] -= 1;
+      }
+    } else if(direction == 3) {
+      //enemy moves up
+      if(ENEMY_POS[i][0] + 1 > 7) {
+        ENEMY_POS[i][0] = 0;
+      } else {
+        ENEMY_POS[i][0] += 1;
+      }
+    }
+  }
+
+  return state;
 }
 
 int LEDMatrixSM(int state) {
+  static unsigned char prev_state;
   switch (state) {
-    case LED_Matrix_Red: {
-      state = LED_Matrix_Blue;
+    case LED_Matrix_OFF: {
+      if(GAME_STATE == GAME) {
+        state = LED_Matrix_Player;
+      } else {
+        state = LED_Matrix_OFF;
+      }
       break;
     }
-    case LED_Matrix_Blue: {
-      state = LED_Matrix_Green;
+    case LED_Matrix_Player: {
+      if(GAME_STATE == GAME) {
+        state = LED_Matrix_Enemy;
+      } else if(GAME_STATE == PAUSED) {
+        prev_state = LED_Matrix_Player;
+        state = LED_Matrix_Pause;
+      } else if(GAME_STATE == GAMEOVER) {
+        state = LED_Matrix_GameOver;
+      } else {
+        state = LED_Matrix_OFF;
+      }
       break;
     }
-    case LED_Matrix_Green: {
-      state = LED_Matrix_Red;
+    case LED_Matrix_Enemy: {
+      if(GAME_STATE == GAME) {
+        state = LED_Matrix_Pelletes;
+      } else if(GAME_STATE == PAUSED) {
+        prev_state = LED_Matrix_Enemy;
+        state = LED_Matrix_Pause;
+      } else if(GAME_STATE == GAMEOVER) {
+        state = LED_Matrix_GameOver;
+      } else {
+        state = LED_Matrix_OFF;
+      }
+      break;
+    }
+    case LED_Matrix_Pelletes: {
+      if(GAME_STATE == GAME){
+        state = LED_Matrix_Player;
+      } else if(GAME_STATE == PAUSED) {
+        prev_state = LED_Matrix_Pelletes;
+        state = LED_Matrix_Pause;
+      } else if(GAME_STATE == GAMEOVER) {
+        state = LED_Matrix_GameOver;
+      }  else {
+        state = LED_Matrix_OFF;
+      }
+      break;
+    }
+    case LED_Matrix_Pause: {
+      if(GAME_STATE == GAME) {
+        state = prev_state;
+      } else {
+        state = LED_Matrix_Pause;
+      }
+      break;
+    }
+    case LED_Matrix_GameOver: {
+      if(GAME_STATE == HOME) {
+        state = LED_Matrix_OFF;
+      } else {
+        state = LED_Matrix_GameOver;
+      }
       break;
     }
     default:
-      state = LED_Matrix_Red;
+      state = LED_Matrix_OFF;
       break;
   }
 
   switch (state) {
-    case LED_Matrix_Red: {
-        for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
-          SendDataToLED(ENEMIES[i], RED);
-        }
+    case LED_Matrix_OFF: {
+      LEDOff();
       break;
     }
-    case LED_Matrix_Blue: {
+    case LED_Matrix_Player: {
       SendPlayerToLED();
       break;
     }
-    case LED_Matrix_Green: {
-      for(unsigned char i = 0; i < NUM_CHERRIES; i++) {
-        SendDataToLED(CHERRIES[i], GREEN);
-      }
+    case LED_Matrix_Enemy: {
+      SendEnemiesToLED();
+      break;
+    }
+    case LED_Matrix_Pelletes: {
+      SendPelletToLED();
+      break;
+    }
+    case LED_Matrix_Pause: {
+      LEDPaused();
+      break;
+    }
+    case LED_Matrix_GameOver: {
+      LEDGameOver();
+      LEDResetComponents();
       break;
     }
     default:
@@ -382,169 +343,54 @@ int LEDMatrixSM(int state) {
 
 // SM for LCD Screen
 int LCDScreenSM(int state) {
-  unsigned char temp[12] = "";
+  static unsigned char count = 0;
+  char temp[32] = "";
+  char score[10];
 
-  if(JOYSTICK_POSITION == STILL) {
-    strcpy(temp,"Still");
-  } else if(JOYSTICK_POSITION == LEFT) {
-    strcpy(temp,"Left");
-  } else if(JOYSTICK_POSITION == RIGHT) {
-    strcpy(temp,"Right");
-  } else if(JOYSTICK_POSITION == UP) {
-    strcpy(temp,"Up");
-  } else if(JOYSTICK_POSITION == DOWN) {
-    strcpy(temp,"Down");
+  if(GAME_STATE == HOME) {
+    itoa(HIGH_SCORE, score, 10);
+    strcpy(temp,"Click to start  Highscore:");
+    strcat(temp,score);
+  } else if(GAME_STATE == GAME) {
+    itoa(DECIMAL_SCORE, score, 10);
+    strcpy(temp,"Score:");
+    strcat(temp, score);
+  } else if(GAME_STATE == PAUSED) {
+    itoa(DECIMAL_SCORE, score, 10);
+    strcpy(temp,"Game Paused     Score:");
+    strcat(temp, score);
+  } else if(GAME_STATE == GAMEOVER) {
+    itoa(DECIMAL_SCORE, score, 10);
+    strcpy(temp,"Game Over       ");
+
+    if(DECIMAL_SCORE > HIGH_SCORE) {
+      count++;
+      if(count <= 5) {
+        strcat(temp, "New High Score!");
+      } else if(count > 5 && count <= 10) {
+        strcat(temp, score);
+      } else {
+        count = 0;
+      }
+    } else {
+      strcat(temp, "Score: ");
+      strcat(temp, score);
+    }
+
   } else {
-    strcpy(temp,"Still");
+    strcpy(temp,"ERROR");
   }
 
-  if(strcmp(temp,LCD_DISPLAY_STRING) != 0) {
+  if( strcmp(temp,LCD_DISPLAY_STRING) != 0 ) {
     LCD_ClearScreen();
     strcpy(LCD_DISPLAY_STRING,temp);
     LCD_DisplayString(1,LCD_DISPLAY_STRING);
   }
+
   return state;
 }
 
 // SM for LED Debugging Lights
 int SoundSM(int state) {
-  switch (state) {
-    case SM4_Init: { //Wait for Joystick Input
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    case SM4_Left: { //Wait for Joystick Input
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    case SM4_Right: {  //Button had been pressed
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    case SM4_Up: { //Wait for button to get released
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    case SM4_Down: {  //Button had been pressed
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    case SM4_Button: { //Wait for button to get released
-      if(JOYSTICK_POSITION == LEFT) {
-        state = SM4_Left;
-      } else if(JOYSTICK_POSITION == RIGHT) {
-        state = SM4_Right;
-      } else if(JOYSTICK_POSITION == UP) {
-        state = SM4_Up;
-      } else if(JOYSTICK_POSITION == DOWN) {
-        state = SM4_Down;
-      } else if(BUTTON == TRUE) {
-        state = SM4_Button;
-      } else {
-        state = SM4_Init;
-      }
-      break;
-    }
-    default: {  //Default to joystick in middle position
-      state = SM4_Init;
-      break;
-    }
-  }
-  unsigned char temp;
-  switch (state) {
-    case SM4_Init: {
-      PORTB = PORTB & 0xE0;
-      break;
-    }
-    case SM4_Left: {
-      temp = PORTB & 0xE0;
-      PORTB = temp | 0x04;
-      break;
-    }
-    case SM4_Right: {
-      temp = PORTB & 0xE0;
-      PORTB = temp | 0x01;
-      break;
-    }
-    case SM4_Up: {
-      temp = PORTB & 0xE0;
-      PORTB = temp | 0x08;
-      break;
-    }
-    case SM4_Down: {
-      temp = PORTB & 0xE0;
-      PORTB = temp | 0x02;
-      break;
-    }
-    case SM4_Button: {
-      temp = PORTB & 0xE0;
-      PORTB = temp | 0x10;
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
   return 0;
 }

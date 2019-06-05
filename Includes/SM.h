@@ -14,14 +14,22 @@
     //Game State
   #define HOME 0
   #define GAME 1
-  #define PUASED 2
+  #define PAUSED 2
   #define GAMEOVER 3
 
   //Global variables
-  unsigned char BUTTON = FALSE;
+  unsigned char START_GAME = FALSE;
+  unsigned char PAUSE_GAME = FALSE;
+  unsigned char RESTART_GAME = FALSE;
+
+  unsigned char ENEMY_COLLISION = FALSE;
+
   unsigned char GAME_STATE = HOME;
   unsigned char JOYSTICK_POSITION = STILL;
-  unsigned char LCD_DISPLAY_STRING[12] = "";
+  char LCD_DISPLAY_STRING[32] = "";
+  int DECIMAL_SCORE = 0;
+  int HIGH_SCORE = 0;
+
 
   enum GameSMSTATES { Game_Home, Game_Play, Game_Paused, Game_Over };
   int GameSM(int);
@@ -38,7 +46,7 @@
   enum EnemySMStates {Enemy_Still, Enemy_Up, Enemy_Down, Enemy_Left, Enemy_Right};
   int EnemySM(int);
 
-  enum LEDMatrixStates { LED_Matrix_Red, LED_Matrix_Blue, LED_Matrix_Green };
+  enum LEDMatrixStates {LED_Matrix_OFF, LED_Matrix_Player, LED_Matrix_Enemy, LED_Matrix_Pelletes, LED_Matrix_Pause, LED_Matrix_GameOver};
   int LEDMatrixSM(int);
 
   enum LCDSMStates { LCD_Start, LCD_Play, LCD_Pause, LCD_GameOver };
