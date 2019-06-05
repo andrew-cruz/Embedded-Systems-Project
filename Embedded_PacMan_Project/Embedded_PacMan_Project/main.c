@@ -45,7 +45,7 @@ int main()
 	unsigned long int joystick_sm_period = 100;
 	unsigned long int button_sm_period = 100;
 	unsigned long int player_sm_period = 100;
-	unsigned long int enemy_sm_period = 350;
+	unsigned long int enemy_sm_period = 700;
 	unsigned long int led_sm_period = 5;
 	unsigned long int lcd_sm_period = 100;
 	unsigned long int sound_sm_period = 100;
@@ -126,6 +126,8 @@ int main()
 	ADCInit();
 	//Initializes PORTC for LCD Screen
 	LCDInit();
+	//Init PWM_on
+	PWM_on();
 	// Scheduler for-loop iterator
 	unsigned short i;
 	unsigned char seed = RandomNum();

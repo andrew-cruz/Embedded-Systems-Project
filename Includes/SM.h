@@ -46,7 +46,9 @@
   enum EnemySMStates {Enemy_Still, Enemy_Up, Enemy_Down, Enemy_Left, Enemy_Right};
   int EnemySM(int);
 
-  enum LEDMatrixStates {LED_Matrix_OFF, LED_Matrix_Player, LED_Matrix_Enemy, LED_Matrix_Pelletes, LED_Matrix_Pause, LED_Matrix_GameOver};
+  enum LEDMatrixStates {LED_Matrix_Init, LED_Matrix_OFF, LED_Matrix_Player,
+                        LED_Matrix_Enemy, LED_Matrix_Pelletes, LED_Matrix_Pause,
+                        LED_Matrix_GameOver};
   int LEDMatrixSM(int);
 
   enum LCDSMStates { LCD_Start, LCD_Play, LCD_Pause, LCD_GameOver };

@@ -1,4 +1,3 @@
-
 // #include <stdlib.h>
 // #include <time.h>
 #include <avr/io.h>
@@ -31,6 +30,22 @@ void ShiftDataEnable() {
 }
 
 void SendPlayerToLED() {
+  if(PLAYER_POS[0] < 0 || PLAYER_POS[0] > 7) {
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0x00);
+    ShiftDataEnable();
+    return;
+  }
+  if(PLAYER_POS[1] < 0 || PLAYER_POS[1] > 7) {
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0x00);
+    ShiftDataEnable();
+    return;
+  }
   unsigned char column = 0x00;
   unsigned char row = 0xFF;
 
@@ -46,6 +61,22 @@ void SendPlayerToLED() {
 
 void SendEnemiesToLED() {
   for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
+    if(ENEMY_POS[i][1] < 0 || ENEMY_POS[i][1] > 7) {
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0x00);
+      ShiftDataEnable();
+      continue;
+    }
+    if(ENEMY_POS[i][0] < 0 || ENEMY_POS[i][0] > 7) {
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0xFF);
+      ShiftData(0x00);
+      ShiftDataEnable();
+      continue;
+    }
     unsigned char column = 0x00;
     unsigned char row = 0xFF;
 
@@ -93,35 +124,90 @@ void SendPelletToLED() {
   ShiftDataEnable();
 }
 
-void LEDOff() {
-  ShiftData(0xFF);
-  ShiftData(0xFF);
-  ShiftData(0xFF);
-  ShiftData(0x00);
-  ShiftDataEnable();
+void LEDOff(unsigned int i) {
+  if(i % 100 == 0) {
+    if(PLAYER_POS[0] == 7) {
+      PLAYER_POS[1]++;
+      if(PLAYER_POS[1] > 7) {
+        PLAYER_POS[0]--;
+        PLAYER_POS[1] = 7;
+      }
+    } else if(PLAYER_POS[0] == 0) {
+      if(PLAYER_POS[1] == 0) {
+        PLAYER_POS[0]++;
+        PLAYER_POS[1] = 0;
+      } else {
+        PLAYER_POS[1]--;
+      }
+    } else if(PLAYER_POS[1] == 7) {
+      PLAYER_POS[0]--;
+      if(PLAYER_POS[0] < 0) {
+        PLAYER_POS[0] = 0;
+        PLAYER_POS[1]--;
+      }
+    } else if(PLAYER_POS[1] == 0) {
+      PLAYER_POS[0]++;
+      if(PLAYER_POS[1] > 7) {
+        PLAYER_POS[0] = 7;
+        PLAYER_POS[1]++;
+      }
+    }
 
-  ENEMY_COLLISION = FALSE;
-
-  if(DECIMAL_SCORE > HIGH_SCORE) {
-    HIGH_SCORE = DECIMAL_SCORE;
+    for(unsigned char k = 0; k < NUM_ENEMIES; k++) {
+      if(ENEMY_POS[k][1] == 7) {
+        ENEMY_POS[k][0]++;
+        if(ENEMY_POS[k][0] > 7) {
+          ENEMY_POS[k][1]--;
+          ENEMY_POS[k][0] = 7;
+        }
+      } else if(ENEMY_POS[k][1] == 0) {
+        if(ENEMY_POS[k][0] == 0) {
+          ENEMY_POS[k][1]++;
+          ENEMY_POS[k][0] = 0;
+        } else {
+          ENEMY_POS[k][0]--;
+        }
+      } else if(ENEMY_POS[k][0] == 7) {
+        ENEMY_POS[k][1]--;
+        if(ENEMY_POS[k][1] < 0) {
+          ENEMY_POS[k][1] = 0;
+          ENEMY_POS[k][0]--;
+        }
+      } else if(ENEMY_POS[k][0] == 0) {
+        ENEMY_POS[k][1]++;
+        if(ENEMY_POS[k][0] > 7) {
+          ENEMY_POS[k][1] = 7;
+          ENEMY_POS[k][0]++;
+        }
+      }
+    }
   }
-  DECIMAL_SCORE = 0;
+
+  return;
 }
 
-void LEDPaused() {
-  ShiftData(0x00);
-  ShiftData(0xFF);
-  ShiftData(0xFF);
-  ShiftData(0xFF);
-  ShiftDataEnable();
+void LEDPaused(unsigned int i) {
+  if(i % 100) {
+    SendPelletToLED();
+    SendEnemiesToLED();
+    SendPlayerToLED();
+  } else {
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0xFF);
+    ShiftData(0x00);
+    ShiftDataEnable();
+  }
 }
 
-void LEDGameOver() {
-  ShiftData(0xFF);
-  ShiftData(0x00);
-  ShiftData(0xFF);
-  ShiftData(0xFF);
-  ShiftDataEnable();
+void LEDGameOver(unsigned int i) {
+  if(i % 100 == 0) {
+    PLAYER_POS[1] -= 1;
+    ENEMY_POS[0][0] -= 1;
+    ENEMY_POS[1][0] -= 1;
+    ENEMY_POS[2][0] -= 1;
+    ENEMY_POS[3][0] -= 1;
+  }
 }
 
 
@@ -157,6 +243,17 @@ void LEDResetComponents() {
   PLAYER_POS[0] = 3;
   PLAYER_POS[1] = 4;
 
+  unsigned char new_x;
+  unsigned char new_y;
+  new_x = rand() % 8;
+  new_y = rand() % 8;
+  if(new_x == PELLET[0] && new_y == PELLET[1]) {
+    new_x = rand() % (rand() % 8);
+    new_y = rand() % (rand() % 8);
+  }
+  PELLET[0] = new_x;
+  PELLET[1] = new_y;
+
   unsigned char init[4][2] = {{7,0}, {7,7}, {0,0}, {0,7}};
   for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
     ENEMY_POS[i][0] = init[i][0];
@@ -174,4 +271,33 @@ unsigned char RandomNum() {
   }
 
   return random_seed;
+}
+
+void GameOverSetup() {
+  PLAYER_POS[0] = 4;
+  PLAYER_POS[1] = 7;
+
+  for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
+    ENEMY_POS[i][0] = 7 + (i + 1);
+    ENEMY_POS[i][1] = 4;
+  }
+  return;
+}
+
+void LEDHomeSetup() {
+  PLAYER_POS[0] = 7; //UP down
+  PLAYER_POS[1] = 4; //Left right
+
+  for(unsigned char i = 0; i < NUM_ENEMIES; i++) {
+    ENEMY_POS[i][0] = i;
+    ENEMY_POS[i][1] = 7;
+  }
+
+  ENEMY_COLLISION = FALSE;
+
+  if(DECIMAL_SCORE > HIGH_SCORE) {
+    HIGH_SCORE = DECIMAL_SCORE;
+  }
+  DECIMAL_SCORE = 0;
+  return;
 }

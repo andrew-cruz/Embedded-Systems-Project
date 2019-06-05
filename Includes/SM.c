@@ -106,8 +106,6 @@ int JoystickSM(int state) {
 
 // SM for Button Press
 int ButtonSM(int state) {
-  //Get Input from button
-  // unsigned char buttonPress0 = 0;
   unsigned char buttonPress0 = GetBit(~PINB, 0);
 
   switch (state) {
@@ -237,12 +235,22 @@ int EnemySM(int state) {
   return state;
 }
 
+unsigned int i_cnt = 1;
+
 int LEDMatrixSM(int state) {
   static unsigned char prev_state;
+
   switch (state) {
+    case LED_Matrix_Init: {
+      state = LED_Matrix_OFF;
+      LEDHomeSetup();
+      break;
+    }
     case LED_Matrix_OFF: {
       if(GAME_STATE == GAME) {
         state = LED_Matrix_Player;
+        LEDResetComponents();
+        i_cnt = 1;
       } else {
         state = LED_Matrix_OFF;
       }
@@ -256,6 +264,8 @@ int LEDMatrixSM(int state) {
         state = LED_Matrix_Pause;
       } else if(GAME_STATE == GAMEOVER) {
         state = LED_Matrix_GameOver;
+        GameOverSetup();
+        i_cnt = 1;
       } else {
         state = LED_Matrix_OFF;
       }
@@ -269,6 +279,8 @@ int LEDMatrixSM(int state) {
         state = LED_Matrix_Pause;
       } else if(GAME_STATE == GAMEOVER) {
         state = LED_Matrix_GameOver;
+        GameOverSetup();
+        i_cnt = 1;
       } else {
         state = LED_Matrix_OFF;
       }
@@ -282,6 +294,8 @@ int LEDMatrixSM(int state) {
         state = LED_Matrix_Pause;
       } else if(GAME_STATE == GAMEOVER) {
         state = LED_Matrix_GameOver;
+        GameOverSetup();
+        i_cnt = 1;
       }  else {
         state = LED_Matrix_OFF;
       }
@@ -290,6 +304,7 @@ int LEDMatrixSM(int state) {
     case LED_Matrix_Pause: {
       if(GAME_STATE == GAME) {
         state = prev_state;
+        i_cnt = 1;
       } else {
         state = LED_Matrix_Pause;
       }
@@ -298,19 +313,24 @@ int LEDMatrixSM(int state) {
     case LED_Matrix_GameOver: {
       if(GAME_STATE == HOME) {
         state = LED_Matrix_OFF;
+        LEDHomeSetup();
+        i_cnt = 1;
       } else {
         state = LED_Matrix_GameOver;
       }
       break;
     }
     default:
-      state = LED_Matrix_OFF;
+      state = LED_Matrix_Init;
       break;
   }
 
   switch (state) {
     case LED_Matrix_OFF: {
-      LEDOff();
+      LEDOff(i_cnt);
+      SendEnemiesToLED();
+      SendPlayerToLED();
+      i_cnt++;
       break;
     }
     case LED_Matrix_Player: {
@@ -326,12 +346,15 @@ int LEDMatrixSM(int state) {
       break;
     }
     case LED_Matrix_Pause: {
-      LEDPaused();
+      LEDPaused(i_cnt);
+      i_cnt++;
       break;
     }
     case LED_Matrix_GameOver: {
-      LEDGameOver();
-      LEDResetComponents();
+      LEDGameOver(i_cnt);
+      SendEnemiesToLED();
+      SendPlayerToLED();
+      i_cnt++;
       break;
     }
     default:
@@ -392,68 +415,73 @@ int LCDScreenSM(int state) {
 
 // SM for LED Debugging Lights
 int SoundSM(int state) {
-  switch (state) {
-    case Sound_Off: {
-      if(GAME_STATE == GAME) {
-        state = Sound_Game;
-      } else {
-        state = Sound_Off;
-      }
-      break;
-    }
-    case Sound_Game: {
-      if(GAME_STATE == PAUSED) {
-        state = Sound_Off;
-      } else if(GAME_STATE == GAMEOVER && DECIMAL_SCORE > HIGH_SCORE) {
-          state = Sound_GameOver_Highscore;
-      } else if(GAME_STATE == GAMEOVER) {
-        state = Sound_GameOver;
-      } else {
-        state = Sound_Game;
-      }
-      break;
-    }
-    case Sound_GameOver: {
-      if(GAME_STATE == HOME) {
-        state = Sound_Off;
-      } else {
-        state = Sound_GameOver;
-      }
-      break;
-    }
-    case Sound_GameOver_Highscore: {
-      if(GAME_STATE == HOME) {
-        state = Sound_Off;
-      } else {
-        state = Sound_GameOver_Highscore;
-      }
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  switch (state) {
-    case Sound_Off: {
-    //No sound
-      break;
-    }
-    case Sound_Game: {
-
-      break;
-    }
-    case Sound_GameOver: {
-
-      break;
-    }
-    case Sound_GameOver_Highscore: {
-
-      break;
-    }
-    default: {
-      break;
-    }
-  }
+  // switch (state) {
+  //   case Sound_Off: {
+  //     if(GAME_STATE == GAME) {
+  //       state = Sound_Game;
+  //     } else {
+  //       state = Sound_Off;
+  //     }
+  //     break;
+  //   }
+  //   case Sound_Game: {
+  //     if(GAME_STATE == PAUSED) {
+  //       state = Sound_Off;
+  //     } else if(GAME_STATE == GAMEOVER && DECIMAL_SCORE > HIGH_SCORE) {
+  //         state = Sound_GameOver_Highscore;
+  //     } else if(GAME_STATE == GAMEOVER) {
+  //       state = Sound_GameOver;
+  //     } else {
+  //       state = Sound_Game;
+  //     }
+  //     break;
+  //   }
+  //   case Sound_GameOver: {
+  //     if(GAME_STATE == HOME) {
+  //       state = Sound_Off;
+  //     } else {
+  //       state = Sound_GameOver;
+  //     }
+  //     break;
+  //   }
+  //   case Sound_GameOver_Highscore: {
+  //     if(GAME_STATE == HOME) {
+  //       state = Sound_Off;
+  //     } else {
+  //       state = Sound_GameOver_Highscore;
+  //     }
+  //     break;
+  //   }
+  //   default: {
+  //     break;
+  //   }
+  // }
+  //
+  // switch (state) {
+  //   case Sound_Off: {
+  //   //No sound
+  //     break;
+  //   }
+  //   case Sound_Game: {
+  //
+  //     break;
+  //   }
+  //   case Sound_GameOver: {
+  //
+  //     break;
+  //   }
+  //   case Sound_GameOver_Highscore: {
+  //
+  //     break;
+  //   }
+  //   default: {
+  //     break;
+  //   }
+  // }
+  // int n = sizeof(Pacman_Waka_Waka);
+  //
+  // for(int i = 0; i < n; i++) {
+  //
+  // }
   return state;
 }

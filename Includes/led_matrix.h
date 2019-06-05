@@ -19,9 +19,9 @@
   void SendPlayerToLED();
   void SendEnemiesToLED();
   void SendPelletToLED();
-  void LEDOff();
-  void LEDPaused();
-  void LEDGameOver();
+  void LEDOff(unsigned int i);
+  void LEDPaused(unsigned int i);
+  void LEDGameOver(unsigned int i);
   void CheckCollisionPellet();
   void CheckCollisionEnemy();
   void LEDResetComponents();
