@@ -43,17 +43,17 @@ taught in this course has been bolded.
 * __8x8 RGB LED Dot Matrix__
 
 ### Pinout
-**PORTA ​(Joystick and Photoresistor)**
+__PORTA (Joystick and Photoresistor)__
 PA0: Joystick VRX
 PA1: Joystick VRY
 PA2: Photoresistor
-**PORTB ​(Joystick and LCD Control)**
+__PORTB (Joystick and LCD Control)__
 PB0: Joystick SW
 PB5: LCD Control Bus
 PB7: LCD Control Bus
-**PORTC ​(LCD Data)**
+__PORTC (LCD Data)__
 PC0 - PC7: LCD Data Bus
-**PORTD ​(Shift Register)**
+__PORTD (Shift Register)__
 PD0: SER Input
 PD1: RCLK
 PD2: SRCLK
@@ -69,20 +69,20 @@ PD4: OE
 
 
 ### Source Code
-● main.c
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Initializes required PORTs
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Schedules and runs tasks
-● Io.c​ / ​io.h
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Functions for working with hardware
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;■ LCD Screen
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;■ ADC
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;■ Timer
-● led_matrix.c​ / ​led_matrix.h
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Functions for sending data to LED Matrix
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Holds LED Matrix global variables
-● SM.c​ / ​SM.h
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Holds all State Machines used
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;○ Controls Joystick, Player, and Enemy movement
+*main.c
+  *Initializes required PORTs
+  *Schedules and runs tasks
+*io.c/io.h
+  *Functions for working with hardware
+    *LCD Screen
+    *ADC
+    *Timer
+*led_matrix.c/led_matrix.h
+  *Functions for sending data to LED Matrix
+  *Holds LED Matrix global variables
+*SM.c/SM.h
+  *Holds all State Machines used
+  *Controls Joystick, Player, and Enemy movement
 
 ## Complexities
 
