@@ -1,6 +1,6 @@
 # Boundless Pac-Mam
 
-## Youtube Link
+## Demo Video Link
 
 https://youtu.be/2JLbczwtcHg
 
