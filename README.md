@@ -47,13 +47,13 @@ __PORTA (Joystick and Photoresistor)__
 * PA0: Joystick VR
 * PA1: Joystick VRY
 * PA2: Photoresistor
-__PORTB (Joystick and LCD Control)__
+<br />__PORTB (Joystick and LCD Control)__
 * PB0: Joystick SW
 * PB5: LCD Control Bus
 * PB7: LCD Control Bus
-__PORTC (LCD Data)__
+<br />__PORTC (LCD Data)__
 * PC0 - PC7: LCD Data Bus
-__PORTD (Shift Register)__
+<br />__PORTD (Shift Register)__
 * PD0: SER Input
 * PD1: RCLK
 * PD2: SRCLK
