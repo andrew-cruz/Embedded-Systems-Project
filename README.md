@@ -44,22 +44,21 @@ taught in this course has been bolded.
 
 ### Pinout
 * __PORTA (Joystick and Photoresistor)__ 
-    * Nested bullet
- * PA0: Joystick VR
- * PA1: Joystick VRY
- * PA2: Photoresistor
+    * PA0: Joystick VR
+    * PA1: Joystick VRY
+    * PA2: Photoresistor
 * __PORTB (Joystick and LCD Control)__
- * PB0: Joystick SW
- * PB5: LCD Control Bus
- * PB7: LCD Control Bus
+    * PB0: Joystick SW
+    * PB5: LCD Control Bus
+    * PB7: LCD Control Bus
 * __PORTC (LCD Data)__
- * PC0 - PC7: LCD Data Bus
+    * PC0 - PC7: LCD Data Bus
 * __PORTD (Shift Register)__
- * PD0: SER Input
- * PD1: RCLK
- * PD2: SRCLK
- * PD3: SRCLR
- * PD4: OE
+    * PD0: SER Input
+    * PD1: RCLK
+    * PD2: SRCLK
+    * PD3: SRCLR
+    * PD4: OE
 
 
 ## Software
@@ -70,43 +69,43 @@ taught in this course has been bolded.
 
 
 ### Source Code
-*main.c
-  *Initializes required PORTs
-  *Schedules and runs tasks
-*io.c/io.h
-  *Functions for working with hardware
-    *LCD Screen
-    *ADC
-    *Timer
-*led_matrix.c/led_matrix.h
-  *Functions for sending data to LED Matrix
-  *Holds LED Matrix global variables
-*SM.c/SM.h
-  *Holds all State Machines used
-  *Controls Joystick, Player, and Enemy movement
+* main.c
+    * Initializes required PORTs
+    * Schedules and runs tasks
+* io.c/io.h
+    * Functions for working with hardware
+    * LCD Screen
+    * ADC
+    * Timer
+* led_matrix.c/led_matrix.h
+    * Functions for sending data to LED Matrix
+    * Holds LED Matrix global variables
+* SM.c/SM.h
+    * Holds all State Machines used
+    * Controls Joystick, Player, and Enemy movement
 
 ## Complexities
 
 ### Completed Complexities:
-● Implementing the joystick
-● Implementing LED Screen
-● Implementing shift registers
-● Implementing LCD Screen
-● Game Logic
-● Pseudorandom number generator
+* Implementing the joystick
+* Implementing LED Screen
+* Implementing shift registers
+* Implementing LCD Screen
+* Game Logic
+* Pseudorandom number generator
 
 ## Known Bugs and Shortcomings
-● When the game is playing sometimes enemies overlap and make it seem like they’ve
+* When the game is playing sometimes enemies overlap and make it seem like they’ve
 disappeared. This happens because in my enemy move function because I do not check
 for collisions between the enemies or pellet. I can begin to debug this by adding another
 collision detection inside of the enemy move function.
-● Pac-Man seems to move a little too fast. This is because of the period of the joystick
+* Pac-Man seems to move a little too fast. This is because of the period of the joystick
 read. I can begin to debug this by manipulating joystick period time.
-● Some dots on the LED Matrix are brighter than the others. This is caused by the order
+* Some dots on the LED Matrix are brighter than the others. This is caused by the order
 that I send the data to the LED Matrix. I can begin to debug this by switching the order of
 the data.
 ## Future work
 
-I would like to extend the LED Matrix screen to a 16x16 screen for better viewing. I would also
+* I would like to extend the LED Matrix screen to a 16x16 screen for better viewing. I would also
 like to implement sound into the game for a more immersive experience. Also I would like to add
 EEPROM so I could save the high score without it resetting after turning the game off.
