@@ -44,6 +44,7 @@ taught in this course has been bolded.
 
 ### Pinout
 * __PORTA (Joystick and Photoresistor)__ 
+    * Nested bullet
  * PA0: Joystick VR
  * PA1: Joystick VRY
  * PA2: Photoresistor
