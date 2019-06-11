@@ -43,10 +43,10 @@ taught in this course has been bolded.
 * __8x8 RGB LED Dot Matrix__
 
 ### Pinout
-__PORTA (Joystick and Photoresistor)__ <br />
-PA0: Joystick VRX<br />
-PA1: Joystick VRY<br />
-PA2: Photoresistor<br />
+__PORTA (Joystick and Photoresistor)__ 
+* PA0: Joystick VR
+* PA1: Joystick VRY
+* PA2: Photoresistor
 __PORTB (Joystick and LCD Control)__<br />
 PB0: Joystick SW<br />
 PB5: LCD Control Bus<br />
