@@ -65,10 +65,9 @@ taught in this course has been bolded.
 ## Software
 
 ### State Machines
-
-
-
-
+![GameSM](https://user-images.githubusercontent.com/22971646/59252857-d04b2980-8be1-11e9-9ded-22916a3d472c.png)
+![LEDSM-2](https://user-images.githubusercontent.com/22971646/59252870-d80ace00-8be1-11e9-8643-ed9fe0dbfb59.png)
+![Button_SM-2](https://user-images.githubusercontent.com/22971646/59252838-c6c1c180-8be1-11e9-81f0-5f9118f038bc.png)
 ### Source Code
 * main.c
     * Initializes required PORTs
