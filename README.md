@@ -12,6 +12,7 @@ Boundless Pac-Man is a Pac-Man inspired game. There are four enemies in the game
 which are the ghost colored red, blue, magenta, and cyan. Pac-Man needs to collect the green
 pellets without colliding with any of the ghost.The more pellets that Pac-Man collects the higher
 his score goes. The game is over once Pac-Man collides with any of the four ghost.
+![IMG-4346](https://user-images.githubusercontent.com/22971646/59252926-fb357d80-8be1-11e9-81c1-3a4517892355.JPG)
 
 
 ### User Guide
