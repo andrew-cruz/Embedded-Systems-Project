@@ -43,6 +43,7 @@ taught in this course has been bolded.
 * __8x8 RGB LED Dot Matrix__
 
 ### Pinout
+![Diagram] (https://drive.google.com/open?id=1KRmTFiN7CfA5qbrs_HVYVd_LD0fS-Id2)
 * __PORTA (Joystick and Photoresistor)__ 
     * PA0: Joystick VR
     * PA1: Joystick VRY
